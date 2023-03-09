@@ -28,7 +28,7 @@ const items = document.querySelectorAll(
   ".deadline-format h4"
 );
 
-let futureDate = new Date(2023, 4, 24, 11, 30, 0);
+let futureDate = new Date(2024, 2, 10, 11, 30, 0);
 
 const year = futureDate.getFullYear();
 const hours = futureDate.getHours();
@@ -37,8 +37,6 @@ const month = months[futureDate.getMonth()];
 const date = futureDate.getDate();
 const weekday = weekdays[futureDate.getDay()];
 
-console.log(weekday);
-
 giveaway.textContent = `giveaway ends on ${weekday}, ${date} ${month}, ${year}, ${hours}:${mins}am`;
 //future time in milisecond
 const futureTime = futureDate.getTime();
@@ -46,7 +44,6 @@ const futureTime = futureDate.getTime();
 function getRemainingTime() {
   const today = new Date().getTime();
   const t = futureTime - today;
-  console.log(t);
   // 1s = 1000ms
   // 1min = 60s
   // 1hr = 60min
@@ -64,19 +61,26 @@ function getRemainingTime() {
   let hours = Math.floor((t % oneDay) / oneHour);
   let minutes = Math.floor((t % oneHour) / oneMin);
   let seconds = Math.floor((t % oneMin) / 1000);
-  console.log(days);
-  console.log(hours);
-  console.log(minutes);
-  console.log(seconds);
 
   //set values array
 
   const values = [days, hours, minutes, seconds];
+  function format(item) {
+    if (item < 10) {
+      return (item = `0${item}`);
+    }
+    return item;
+  }
 
   items.forEach(function (item, index) {
-    console.log(index, item);
-    item.innerHTML = values[index];
+    item.innerHTML = format(values[index]);
   });
+  if (t < 0) {
+    clearInterval(countDown);
+    deadline.innerHTML = `<h4 class="expired">Sorry this giveaway has expired</h4>`;
+  }
 }
+//countDown
+let countDown = setInterval(getRemainingTime, 1000);
 
 getRemainingTime();
